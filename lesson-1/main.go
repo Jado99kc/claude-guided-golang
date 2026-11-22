@@ -6,16 +6,6 @@ import (
 	"strconv"
 )
 
-type OrderStatus int
-
-const (
-	StatusUnknown OrderStatus = iota // 0, the zero value
-	StatusSubmitted
-	StatusProcessing
-	StatusPending
-	StatusCompleted
-)
-
 func main() {
 	// fizzbuzz()
 
