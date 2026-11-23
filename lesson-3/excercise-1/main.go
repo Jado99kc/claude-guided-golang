@@ -19,26 +19,37 @@ const (
 	StatusCancelled                    // 5
 )
 
-func (o OrderStatus) String() string {
-	m := map[int]string{0: "unknown", 1: "pending", 2: "paid", 3: "shipped", 4: "delivered", 5: "cancelled"}
+var statusNames = map[OrderStatus]string{
+	StatusUnknown:   "unknown",
+	StatusPending:   "pending",
+	StatusPaid:      "paid",
+	StatusShipped:   "shipped",
+	StatusDelivered: "delivered",
+	StatusCancelled: "cancelled",
+}
 
-	if _, ok := m[o]; ok {
-		return m[o]
+// Compile-time check that OrderStatus satisfies fmt.Stringer.
+var _ fmt.Stringer = StatusUnknown
+
+// String returns the lowercase name of the status, or "OrderStatus(N)"
+// for a value that is not one of the declared constants.
+func (s OrderStatus) String() string {
+	if name, ok := statusNames[s]; ok {
+		return name
 	}
 
-	if o == StatusShipped {
-		return "shipped"
-	}
-	return strconv.FormatInt(0, 10)
+	return "OrderStatus(" + strconv.Itoa(int(s)) + ")"
 }
 
 //chose a value receiver since the function String will not modify the original Order status
 
-var _ fmt.Stringer = (OrderStatus)(0)
+var _ fmt.Stringer = OrderStatus(0)
 
 func main() {
+	fmt.Println(StatusUnknown)
 	fmt.Println(StatusShipped)
-	fmt.Println(99)
+	fmt.Println(OrderStatus(99))
+	fmt.Println(OrderStatus(-1))
 }
 
 // if String() had a pointer receiver it would not satisfy the Stringer interface since Stringer expects the method on the value and not the pointer
