@@ -1,47 +1,33 @@
 package main
 
-import (
-	"cmp"
-	"fmt"
-	"strings"
-)
+import "fmt"
 
-type WordCount struct {
-	Word  string
-	Count int
-}
+/*
+ // Dedup returns the unique strings from in, preserving first-seen order.
+ // It must NOT modify in.
+ func Dedup(in []string) []string
+ Dedup([]string{"b", "a", "b", "c", "a"}) → [b a c]
+ Use a set (map[string]struct{}) and pre-size both your map and the result slice.
+ In a comment, state the time complexity, and say why it’s better than checking slices.Contains(result, s) in the loop.
+*/
 
-// TopWords returns the n most frequent words in text.
-// Words are case-insensitive ("Go" == "go"), split on whitespace.
-// Ties are broken alphabetically. If n > number of unique words, return all.
-func TopWords(text string, n int) []WordCount {
-	result := []WordCount{}
+func Dedup(in []string) []string {
+	seen := make(map[string]struct{}, len(in))
+	result := make([]string, 0, len(in))
 
-	if n <= 0 {
-		return result
-	}
-
-	strArr := strings.Fields(text)
-	for _, w := range strArr {
-		lowerW := strings.ToLower(w)
-		if len(result) == 0 {
-			result = append(result, WordCount{Word: lowerW, Count: 1})
+	for _, s := range in {
+		if _, exists := seen[s]; exists {
 			continue
 		}
-		for _, x := range result {
-			lowerX := strings.ToLower(x.Word)
-			if cmp.Compare(lowerW, lowerX) == 0 {
-				x.Count++
-			} else {
-				result = append(result, WordCount{Word: lowerW, Count: 1})
-			}
-		}
-	}
 
+		seen[s] = struct{}{}
+		result = append(result, s)
+	}
 	return result
 }
 
 func main() {
-	a := "the go gopher and the Go team love go"
-	fmt.Println(TopWords(a, 2))
+	a := []string{"c", "b", "c", "d", "b", "b", "a", "c", "d"}
+	res := Dedup(a)
+	fmt.Println(res)
 }
